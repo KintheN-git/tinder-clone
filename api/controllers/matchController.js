@@ -16,6 +16,14 @@ export const swipeRight = async (req, res) => {
       currentUser.dislikes.push(dislikedUserId);
       // veritabanına kaydet
       await currentUser.save();
+
+      // şu anki kullanıcının diğer kullanıcının beğenilen listesinde olma durumu. eşleşme durumu
+      if (likedUser.likes.includes(currentUser._id)) {
+        currentUser.matches.push(likedUserId);
+        likedUser.matches.push(currentUser._id);
+        await Promise.all([currentUser.save(), likedUser.save()]);
+        // todo : match olma durumunda notification gönderme socket.io ile
+      }
     }
 
     res
