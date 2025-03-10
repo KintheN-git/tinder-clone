@@ -10,12 +10,9 @@ const SignUpForm = () => {
     age: "",
     genderPreference: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const { signup, loading } = useAuthStore();
-  // const signup = async () => {
-  //   alert("signup");
-  // };
+
   const inputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -220,13 +217,13 @@ const SignUpForm = () => {
         type="submit"
         className={`w-full flex justify-center py-2 px-4 border border-transparent 
 					rounded-md shadow-sm text-sm font-medium text-white ${
-            isLoading
+            loading
               ? "bg-pink-400 cursor-not-allowed"
               : "bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           }`}
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? "Signing in..." : "Sign in"}
+        {loading ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );

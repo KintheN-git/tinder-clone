@@ -1,13 +1,21 @@
 import React, { useState } from "react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const LogInForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { login, loading } = useAuthStore();
   return (
-    <form className="space-y-6">
+    <form
+      className="space-y-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        login(formData);
+      }}
+    >
       <div>
         <label
           htmlFor="email"
@@ -56,13 +64,13 @@ const LogInForm = () => {
         type="submit"
         className={`w-full flex justify-center py-2 px-4 border border-transparent 
 					rounded-md shadow-sm text-sm font-medium text-white ${
-            isLoading
+            loading
               ? "bg-pink-400 cursor-not-allowed"
               : "bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           }`}
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? "Signing in..." : "Sign in"}
+        {loading ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );
