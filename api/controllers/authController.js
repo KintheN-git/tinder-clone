@@ -1,11 +1,12 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-
 // token oluştur
-const signToken = async (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+const signToken = (id) => {
+  // jwt token
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
-
 // kullanıcı kayıt
 export const signup = async (req, res) => {
   // kullanıcı bilgilerini al
@@ -13,16 +14,17 @@ export const signup = async (req, res) => {
   try {
     // tüm imputların boş olup olmadığını kontrol et
     if (!name || !email || !password || !age || !gender || !genderPreference) {
-      return res
-        .status(400)
-        .json({ succes: false, message: "Please fill all the fields" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     // yaş 18 olup olmadığını kontrol et
     if (age < 18) {
       return res.status(400).json({
         success: false,
-        message: "You must be at least 18 years old to use this app",
+        message: "You must at lest 18 years old",
       });
     }
 
@@ -30,7 +32,7 @@ export const signup = async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters long",
+        message: "Password must be at least 6 characters",
       });
     }
 
@@ -56,33 +58,34 @@ export const signup = async (req, res) => {
     });
 
     // kullanıcıyı dön
-    res
-      .status(201)
-      .json({ success: true, user: newUser, message: "User created" });
+    res.status(201).json({
+      success: true,
+      user: newUser,
+    });
   } catch (error) {
     console.log("Error in signup controller:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 // kullanıcı giris
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     // tüm imputların boş olup olmadığını kontrol et
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     // kullanıcıyı veritabanından bul
-    const user = User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password");
 
     // kullanıcı yoksa veya şifresi yanlışsa hata dön
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
-        succes: false,
+        success: false,
         message: "Invalid email or password",
       });
     }
@@ -99,15 +102,17 @@ export const login = async (req, res) => {
     });
 
     // kullanıcıyı dön
-    res.status(200).json({ success: true, user });
+    res.status(200).json({
+      success: true,
+      user,
+    });
   } catch (error) {
     console.log("Error in login controller:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 // kullanıcı cıkıs
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
   res.clearCookie("jwt");
-  res.status(200).json({ success: true, message: "User logged out" });
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 };

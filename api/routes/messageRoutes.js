@@ -1,5 +1,5 @@
 import express from "express";
-import { protectedRoute } from "../middleware/auth.js";
+import { protectRoute } from "../middleware/auth.js";
 import {
   getConversation,
   sendMessage,
@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-router.use(protectedRoute);
+router.use(protectRoute);
 
 router.post("/send", sendMessage);
 router.get("/conversation/:userId", getConversation);

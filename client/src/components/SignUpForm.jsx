@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +12,10 @@ const SignUpForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const signup = async () => {
-    alert("signup");
-  };
+  const { signup, loading } = useAuthStore();
+  // const signup = async () => {
+  //   alert("signup");
+  // };
   const inputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -23,7 +25,7 @@ const SignUpForm = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        signup();
+        signup(formData);
       }}
       className="space-y-6"
     >

@@ -1,5 +1,5 @@
 import express from "express";
-import { protectedRoute } from "../middleware/auth.js";
+import { protectRoute } from "../middleware/auth.js";
 import {
   getMatches,
   getUserProfiles,
@@ -9,10 +9,10 @@ import {
 
 const router = express.Router();
 
-router.post("/swipe-right/:likedUserId", protectedRoute, swipeRight);
-router.post("/swipe-left/:dislikedUserId", protectedRoute, swipeLeft);
+router.post("/swipe-right/:likedUserId", protectRoute, swipeRight);
+router.post("/swipe-left/:dislikedUserId", protectRoute, swipeLeft);
 
-router.get("/matches", protectedRoute, getMatches);
-router.get("/user-profiles", protectedRoute, getUserProfiles);
+router.get("/matches", protectRoute, getMatches);
+router.get("/user-profiles", protectRoute, getUserProfiles);
 
 export default router;
