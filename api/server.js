@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+
 import cors from "cors";
 // routes
 import authRoutes from "./routes/authRoutes.js";
@@ -20,6 +21,9 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(express.json({ limit: "100mb" })); // Yükleme boyutunu artır
+app.use(express.urlencoded({ limit: "100mb", extended: true })); // Form verileri için
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
