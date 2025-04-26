@@ -16,7 +16,6 @@ const SignUpForm = () => {
   const inputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  console.log("formData", formData);
 
   return (
     <form

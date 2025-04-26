@@ -2,13 +2,13 @@ import { Server } from "socket.io";
 
 let io;
 
-const connectedUsers = new Map(); // Kullanıcıların oturumunu tutan bir map
+const connectedUsers = new Map();
 
 export const initializeSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL, // Izin verilen originler
-      credentials: true, // Kullanıcı adı ve şifreyi gizli olacak mı?
+      origin: process.env.CLIENT_URL,
+      credentials: true,
     },
   });
 
@@ -20,13 +20,20 @@ export const initializeSocket = (httpServer) => {
     socket.userId = userId;
     next();
   });
+
   io.on("connection", (socket) => {
-    // Kullanıcı oturumunu oluşturma
     connectedUsers.set(socket.userId, socket.id);
-    console.log("A user connected:", socket.id);
+
+    socket.on("joinConversation", (room) => {
+      socket.join(room);
+    });
+
+    socket.on("leaveConversation", (room) => {
+      socket.leave(room);
+    });
+
     socket.on("disconnect", () => {
       connectedUsers.delete(socket.userId);
-      console.log("A user disconnected:", socket.id);
     });
   });
 };

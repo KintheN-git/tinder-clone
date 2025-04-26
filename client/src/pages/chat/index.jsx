@@ -6,6 +6,7 @@ import { useMatchStore } from "../../store/useMatchStore";
 import { Link, useParams } from "react-router-dom";
 import { Loader, UserX } from "lucide-react";
 import MessageInput from "../../components/MessageInput";
+import { initializeSocket } from "../../socket/socket.client";
 
 const ChatPage = () => {
   const { matches, isLoadingMyMatches, getMyMatches } = useMatchStore();
@@ -21,13 +22,14 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (authUser && id) {
+      initializeSocket(authUser._id); // Socket bağlantısını başlat
       getMyMatches();
       getMessages(id);
-      subscribeToMessages();
+      subscribeToMessages(id, authUser._id); // userId ve authUserId'yi geçir
     }
 
     return () => {
-      unsubscribeFromMessages();
+      unsubscribeFromMessages(id, authUser._id); // Odadan ayrıl
     };
   }, [
     getMyMatches,
@@ -43,20 +45,18 @@ const ChatPage = () => {
   if (!match) return <MatchNotFound />;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-200 bg-opacity-50 ">
+    <div className="min-h-screen flex flex-col bg-gray-200 bg-opacity-50">
       <Header />
-
-      <div className="flex flex-col flex-grow p-4 md:p-6 lg:p-8 overflow-hidden max-w-4xl mx-auto w-full ">
+      <div className="flex flex-col flex-grow p-4 md:p-6 lg:p-8 overflow-hidden max-w-4xl mx-auto w-full">
         <div className="flex items-center mb-4 bg-white rounded-lg shadow p-3">
           <img
             src={match.image || "/avatar.png"}
-            alt={"avatar"}
+            alt="avatar"
             className="w-12 h-12 rounded-full object-cover mr-3 border-2 border-pink-300"
           />
           <h2 className="text-xl font-semibold text-gray-800">{match.name}</h2>
         </div>
-
-        <div className="flex-grow overflow-y-auto mb-4 bg-white rounded-lg shadow p-4 ">
+        <div className="flex-grow overflow-y-auto mb-4 bg-white rounded-lg shadow p-4">
           {messages.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
               Start a conversation with {match.name}.
@@ -82,7 +82,6 @@ const ChatPage = () => {
             ))
           )}
         </div>
-
         <MessageInput match={match} />
       </div>
     </div>
@@ -99,7 +98,7 @@ const MatchNotFound = () => (
         Match Not Found
       </h2>
       <p className="text-gray-600">
-        Oops! It seems this match doesn&apos;t exist or has been removed.
+        Oops! It seems this match doesn't exist or has been removed.
       </p>
       <Link
         to="/"

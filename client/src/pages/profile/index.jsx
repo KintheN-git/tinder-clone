@@ -42,7 +42,6 @@ const ProfilePage = () => {
       setUserData({ ...userData, image: imageUrl, imageFile: file });
     }
   };
-  console.log("image", userData.image);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

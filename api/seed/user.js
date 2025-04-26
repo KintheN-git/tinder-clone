@@ -95,8 +95,6 @@ const seedUsers = async () => {
     const allUsers = [...maleUsers, ...femaleUsers];
 
     await User.insertMany(allUsers);
-
-    console.log("Database seeded successfully with users having concise bios");
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
