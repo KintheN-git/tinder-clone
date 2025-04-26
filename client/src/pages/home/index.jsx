@@ -4,8 +4,8 @@ import { useMatchStore } from "../../store/useMatchStore";
 import Header from "../../components/Header";
 import { Frown } from "lucide-react";
 import SwipeArea from "../../components/SwipeArea";
-import SwipeFeedback from "../../components/SwipeFeedBack";
 import { useAuthStore } from "../../store/useAuthStore";
+import SwipeFeedback from "../../components/SwipeFeedBack";
 
 const HomePage = () => {
   const {
