@@ -1,4 +1,5 @@
 import Message from "../models/Message.js";
+import { getConnectedUsers, getIO } from "../socket/socket.server.js";
 
 // mesaj gönder
 export const sendMessage = async (req, res) => {
@@ -13,7 +14,19 @@ export const sendMessage = async (req, res) => {
       content,
     });
 
-    // todo : socket.io ile mesaj gönderme gerçek zamanlı
+    // socket.io ile mesaj gönderme gerçek zamanlı
+
+    const io = getIO(); //socket io nesnesini al
+    const connectedUsers = getConnectedUsers(); //oturum açan kullanıcıların oturumunu al
+
+    const receiverSocketId = connectedUsers.get(receiverId); // alıcının socket id'sini al
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", {
+        message: newMessage,
+      });
+    } // alıcıya mesaj gönder
+
     res.status(201).json({ success: true, message: newMessage });
   } catch (error) {
     console.log("Error in sendMessage:", error);
@@ -24,14 +37,12 @@ export const sendMessage = async (req, res) => {
 export const getConversation = async (req, res) => {
   const { userId } = req.params;
   try {
-    // mesajları al
     const messages = await Message.find({
-      // gönderenden alıcıya veya alıcıdan gönderene gönderilen mesajları al
       $or: [
         { sender: req.user.id, reciever: userId },
         { sender: userId, reciever: req.user.id },
       ],
-    }).sort({ createdAt });
+    }).sort({ createdAt: 1 });
     res.status(200).json({ success: true, messages });
   } catch (error) {
     console.log("Error in getConversation:", error);
