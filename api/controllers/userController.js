@@ -3,32 +3,51 @@ import User from "../models/User.js";
 
 export const updateProfile = async (req, res) => {
   try {
-    const { image, ...otherData } = req.body;
+    const { ...otherData } = req.body;
     let updatedData = otherData;
 
-    // resim varsa yukle
-    if (image) {
-      // resim base64 olarak geldiyse
-      if (image.startsWith("data:image")) {
-        try {
-          const uploadResponse = await cloudinary.uploader.upload(image);
-          updatedData.image = uploadResponse.secure_url;
-        } catch (error) {
-          console.log("Error uploading image:", error);
-          return res
-            .status(400)
-            .json({ success: false, message: "Image upload failed" });
-        }
-      }
-    }
+    // Dosya varsa Cloudinary'ye yükle
+    if (req.file) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload_stream(
+          { resource_type: "image" },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading image:", error);
+              return res
+                .status(400)
+                .json({ success: false, message: "Image upload failed" });
+            }
+            updatedData.image = result.secure_url;
+            updateUserProfile(req, res, updatedData);
+          }
+        );
 
+        uploadResponse.end(req.file.buffer);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        return res
+          .status(400)
+          .json({ success: false, message: "Image upload failed" });
+      }
+    } else {
+      updateUserProfile(req, res, updatedData);
+    }
+  } catch (error) {
+    console.error("Error in updateProfile:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const updateUserProfile = async (req, res, updatedData) => {
+  try {
     const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, {
       new: true,
     });
 
     res.status(200).json({ success: true, user: updatedUser });
   } catch (error) {
-    console.log("Error in updateProfile:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Error updating user:", error);
+    res.status(500).json({ success: false, message: "Error updating user" });
   }
 };

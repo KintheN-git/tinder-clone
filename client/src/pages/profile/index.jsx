@@ -19,7 +19,16 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    updateProfile(userData);
+    const formData = new FormData();
+    Object.keys(userData).forEach((key) => {
+      if (key === "imageFile") {
+        formData.append("image", userData[key]); // Dosyayı ekle
+      } else {
+        formData.append(key, userData[key]);
+      }
+    });
+
+    updateProfile(formData);
   };
   const inputChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -27,14 +36,10 @@ const ProfilePage = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log("file", file);
 
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserData({ ...userData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
+      const imageUrl = URL.createObjectURL(file); // Dosya için geçici URL oluştur
+      setUserData({ ...userData, image: imageUrl, imageFile: file });
     }
   };
   console.log("image", userData.image);

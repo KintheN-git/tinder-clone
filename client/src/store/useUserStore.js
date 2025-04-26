@@ -8,7 +8,11 @@ export const useUserStore = create((set) => ({
   updateProfile: async (data) => {
     try {
       set({ loading: true });
-      const res = await axiosInstance.put("/users/update", data);
+      const res = await axiosInstance.put("/users/update", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Profile updated successfully");
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong");
