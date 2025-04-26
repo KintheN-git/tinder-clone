@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 import { Frown } from "lucide-react";
 import SwipeArea from "../../components/SwipeArea";
 import { useAuthStore } from "../../store/useAuthStore";
-import SwipeFeedback from "../../components/SwipeFeedBack";
+import SwpFeedback from "../../components/SwpFeedback";
 
 const HomePage = () => {
   const {
@@ -38,7 +38,7 @@ const HomePage = () => {
           {userProfiles.length > 0 && !isLoadingUserProfiles && (
             <>
               <SwipeArea />
-              <SwipeFeedback />
+              <SwpFeedback />
             </>
           )}
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { useMatchStore } from "../store/useMatchStore";
 
 const getFeedbackStyle = (swipeFeedback) => {
@@ -14,19 +15,20 @@ const getFeedbackText = (swipeFeedback) => {
   return "";
 };
 
-const SwipeFeedback = () => {
+const SwpFeedback = () => {
   const { swipeFeedback } = useMatchStore();
 
   return (
     <div
       className={`
-		absolute top-10 left-0 right-0 text-center text-2xl font-bold ${getFeedbackStyle(
-      swipeFeedback
-    )}
-		`}
+      absolute top-10 left-0 right-0 text-center text-2xl font-bold ${getFeedbackStyle(
+        swipeFeedback
+      )}
+      `}
     >
       {getFeedbackText(swipeFeedback)}
     </div>
   );
 };
-export default SwipeFeedback;
+
+export default SwpFeedback;
